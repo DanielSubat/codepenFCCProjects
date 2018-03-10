@@ -1,0 +1,548 @@
+<html>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Mukta+Mahee|Anton" rel="stylesheet">
+    <style>
+        body {
+            margin: 0 auto;
+            background: #FF5F6D;
+            background: linear-gradient(to bottom, #6a82fb, #FF5F6D, #FFC371);
+            font-family: "Anton", 'Mukta Mahee', sans-serif;
+            color: white;
+            font-size: 1.5em;
+            padding-top: 5.5rem;
+        }
+
+
+        .switch {
+            position: relative;
+            margin: 20px auto;
+            height: 26px;
+            width: 120px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 3px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .switch-label {
+            position: relative;
+            z-index: 2;
+            float: left;
+            width: 58px;
+            line-height: 26px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.35);
+            text-align: center;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+        }
+
+        .switch-label:active {
+            font-weight: bold;
+        }
+
+        .switch-label-off {
+            padding-left: 2px;
+        }
+
+        .switch-label-on {
+            padding-right: 2px;
+        }
+
+        .switch-input {
+            display: none;
+        }
+
+        .switch-input:checked+.switch-label {
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.65);
+            text-shadow: 0 1px rgba(255, 255, 255, 0.25);
+            -webkit-transition: 0.15s ease-out;
+            -moz-transition: 0.15s ease-out;
+            -o-transition: 0.15s ease-out;
+            transition: 0.15s ease-out;
+        }
+
+        .switch-input:checked+.switch-label-on~.switch-selection {
+            left: 60px;
+        }
+
+        .switch-selection {
+            display: block;
+            position: absolute;
+            z-index: 1;
+            top: 2px;
+            left: 2px;
+            width: 58px;
+            height: 22px;
+            background: #65bd63;
+            border-radius: 3px;
+            background-image: linear-gradient(to bottom, #349c22, #5bf159);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+            transition: left 0.15s ease-out;
+        }
+
+        .switch-blue .switch-selection {
+            background: #3aa2d0;
+            background-image: linear-gradient(to bottom, #4fc9ee, #3aa2d0);
+        }
+
+        .switch-yellow .switch-selection {
+            background: #c4bb61;
+            background-image: linear-gradient(to bottom, #e0dd94, #c4bb61);
+        }
+
+        #menu-sidebar,
+        #menu-sidebar:focus,
+        #locate,
+        #city,
+        #city:focus,
+        #city:hover,
+        #city:active {
+            border: none !important;
+            font-size: 1.2em;
+            font-family: "Anton", 'Mukta Mahee', sans-serif;
+            background: transparent !important;
+            color: white !important;
+            outline: none auto 0px;
+            box-shadow: none;
+        }
+
+        #menu-sidebar:hover {
+            color: lightblue !important;
+
+        }
+
+        #city::placeholder {
+            color: lightgrey;
+            text-align: center;
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -20;
+        }
+
+        .videoctn {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -20;
+        }
+
+        .videoctn video {
+            object-fit: cover;
+        }
+
+        .ztop {
+            z-index: 20;
+        }
+
+        .spinner,
+        .spinner:before,
+        .spinner:after {
+            background: #ffffff;
+            -webkit-animation: load1 1s infinite ease-in-out;
+            animation: load1 1s infinite ease-in-out;
+            width: 1em;
+            height: 4em;
+        }
+
+        .spinner {
+            color: #ffffff;
+            text-indent: -9999em;
+            margin: 88px auto;
+            position: relative;
+            font-size: 11px;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+        .spinner:before,
+        .spinner:after {
+            position: absolute;
+            top: 0;
+            content: '';
+        }
+
+        .spinner:before {
+            left: -1.5em;
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .spinner:after {
+            left: 1.5em;
+        }
+
+        @-webkit-keyframes load1 {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+        }
+
+        @keyframes load1 {
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 4.5em;
+            transition: all .25s ease-out;
+            transform: translateX(0%);
+            opacity: 0.9;
+
+        }
+
+        .sidenav {
+            left: 0px;
+        }
+
+        .sidenav-on {
+            width: 100%;
+
+        }
+
+        #sidebar h4,
+        #sidebar a,
+        .onoffswitch,
+        main h1,
+        main p {
+            padding-left: 15px;
+
+            line-height: 3.5vmin;
+        }
+
+        .close-icon:after {
+            content: "\00D7";
+            font-size: 2.2em;
+            position: absolute;
+            left: 30px;
+            bottom: 3px;
+            background: #333;
+        }
+
+        main h1 {
+            font-weight: bold;
+            font-size: 3em;
+            letter-spacing: 3px;
+            text-shadow: 0 1px 0 #ccc,
+            0 2px 0 #c9c9c9,
+            0 3px 0 #bbb,
+            0 4px 0 #b9b9b9,
+            0 5px 0 #aaa,
+            0 6px 1px rgba(0, 0, 0, .1),
+            0 0 5px rgba(0, 0, 0, .1),
+            0 1px 3px rgba(0, 0, 0, .3),
+            0 3px 5px rgba(0, 0, 0, .2),
+            0 5px 10px rgba(0, 0, 0, .25),
+            0 10px 10px rgba(0, 0, 0, .2),
+            0 20px 20px rgba(0, 0, 0, .15);
+        }
+
+        .logotxt {
+            color: #00ff00;
+            font-size: 1.5em;
+            font-family: 'Mukta Mahee', sans-serif;
+        }
+    </style>
+    <div id="sidebar" class="sidenav d-flex flex-column justify-content-center align-items-center">
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contact</a>
+        <p class="">Hintergrund:</p>
+
+        <div class="switch">
+            <input type="radio" class="switch-input" name="view" value="img" id="img">
+            <label for="img" class="switch-label switch-label-off">Bild</label>
+            <input type="radio" class="switch-input" name="view" value="vid" id="vid" checked>
+            <label for="vid" class="switch-label switch-label-on">Video</label>
+            <span class="switch-selection"></span>
+        </div>
+
+
+
+
+
+        <p class="">Einheit:</p>
+        <div class="switch switch-blue">
+
+            <input type="radio" class="switch-input" name="view2" value="cels" id="cels" checked>
+            <label for="cels" class="switch-label switch-label-off">&deg; C</label>
+            <input type="radio" class="switch-input" name="view2" value="fahr" id="fahr">
+            <label for="fahr" class="switch-label switch-label-on">&deg; F</label>
+            <span class="switch-selection"></span>
+        </div>
+
+
+
+
+        <p class="">Vorhersage:</p>
+        <div class="switch switch-yellow">
+            <input type="radio" class="switch-input" name="view3" value="today" id="today" checked>
+            <label for="today" class="switch-label switch-label-off">Heute</label>
+            <input type="radio" class="switch-input" name="view3" value="five" id="five">
+            <label for="five" class="switch-label switch-label-on">5 Tage</label>
+            <span class="switch-selection"></span>
+        </div>
+    </div>
+    <nav class="navbar   navbar-expand-md fixed-top bg-dark justify-content-center">
+
+
+        <button id="menu-sidebar" type="button" class="btn">&#x2630;</button>
+        <a href="https://codepen.io/bbx/" target="_blank" class="navbar-brand d-flex w-50 mr-auto align-items-center text-white">
+            <svg width="64" height="64" viewBox="0 0 292 184" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#00ff00" height="184" width="292" rx="25" ry="25" id="rect7" />
+                <path fill="#ffffff" d=" M 79.72 49.60 C 86.00 37.29 98.57 29.01 111.96 26.42 C 124.27 24.11 137.53 26.15 148.18 32.90 C 158.08 38.78 165.39 48.87 167.65 60.20 C 176.20 57.90 185.14 56.01 194.00 57.73 C 206.08 59.59 217.92 66.01 224.37 76.66 C 227.51 81.54 228.85 87.33 229.23 93.06 C 237.59 93.33 246.22 95.10 253.04 100.19 C 256.69 103.13 259.87 107.67 258.91 112.59 C 257.95 118.43 252.78 122.38 247.78 124.82 C 235.27 130.43 220.23 130.09 207.98 123.93 C 199.33 127.88 189.76 129.43 180.30 128.57 C 173.70 139.92 161.70 147.65 148.86 149.93 C 133.10 153.26 116.06 148.15 104.42 137.08 C 92.98 143.04 78.96 143.87 66.97 139.04 C 57.75 135.41 49.70 128.00 46.60 118.43 C 43.87 109.95 45.81 100.29 51.30 93.32 C 57.38 85.18 67.10 80.44 76.99 78.89 C 74.38 69.20 74.87 58.52 79.72 49.60 Z"
+                />
+            </svg>
+            <span class="logotxt px-2">
+                BBX Weather
+                <small>(beta)</small>
+            </span>
+        </a>
+        <div class="navbar-nav w-100">
+
+            <form class="form-inline navbar-nav mx-auto w-100 justify-content-center" action="" method="get" id="searchform">
+                <input id="city" name="q" class="form-control mr-sm-2" placeholder="Stadt suchen" title="" type="text" autofocus>
+
+            </form>
+            <div class="nav navbar-nav ml-auto w-100 justify-content-end">
+                <button id="locate" onclick="getLocation()" type="button" class="btn">
+                    Standort ermitteln</button>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <main class="w-100">
+        <div class="videoctn">
+            <video id="video" width="480" controls muted autoplay loop>
+                <source src="blue.mp4" type="video/webm">
+            </video>
+            <div class="spinner ">Loading...</div>
+            <div class="px-3 py-5 d-flex flex-column justify-content-center align-content-center    align-items-center    " id="location">
+
+
+                <h1>
+
+                        &#x26f3;  &#x2601; &#x2602; &#x2603; &#x263C; &#x26ED; &#9748; &#x2746; &#x26c8; &#x26c6; &#x26A1; &#x263D; &#x26C5; &#x2193;
+
+
+
+
+                    <svg width="320" height="100" viewbox="0 0 250 1150" id="svg2">
+                        <g id="layer1" transform="translate(-102.25254,-34.5)">
+                            <path style="fill:#c0c4c5;fill-opacity:1;stroke:#bec4bf;stroke-width:10;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+                                d="m 261.81504,39.5 c -42.86442,2.919034 -65.08599,27.506568 -78.6875,61.125 l 0,620.71875 c -45.37127,27.20076 -75.875,77.73219 -75.875,135.5625 0,86.58802 68.38343,156.87495 152.65625,156.87495 84.27282,0 152.65625,-70.28694 152.65624,-156.87495 0,-58.20177 -30.89578,-109.02087 -76.75,-136.09375 l 0,-620.1875 C 330.77039,67.443053 296.48605,44.440326 261.81504,39.5 z"
+                                id="path2396" />
+                            <path id="path3196" d="m 261.81504,39.5 c -42.86442,2.919034 -65.08599,27.506568 -78.6875,61.125 l 0,620.71875 c -45.37127,27.20076 -75.875,77.73219 -75.875,135.5625 0,86.58802 68.38343,156.87495 152.65625,156.87495 84.27282,0 152.65625,-70.28694 152.65624,-156.87495 0,-58.20177 -30.89578,-109.02087 -76.75,-136.09375 l 0,-620.1875 C 330.77039,67.443053 296.48605,44.440326 261.81504,39.5 z"
+                                style="fill:#c0c0c0;" />
+                            <g id="g3246" transform="translate(789.141,0)">
+                                <path id="path3327" d="m -606.01347,663.15625 0,58.1875 c -45.37126,27.20076 -75.875,77.73219 -75.875,135.5625 10e-6,86.58802 68.38343,156.87495 152.65625,156.87495 84.27285,10e-5 152.65627,-70.28694 152.65626,-156.87495 1e-5,-58.20177 -30.89578,-109.02087 -76.75,-136.09375 l 0,-57.65625 c -53.50575,-26.09905 -103.62656,-18.34881 -152.68751,0 z"
+                                    style="fill:#0fdd10;fill-opacity:1;stroke:none" />
+                                <path style="fill:#0fdd10;" d="m -606.01347,663.15625 0,58.1875 c -45.37126,27.20076 -75.875,77.73219 -75.875,135.5625 10e-6,86.58802 68.38343,156.87495 152.65625,156.87495 84.27285,10e-5 152.65627,-70.28694 152.65626,-156.87495 1e-5,-58.20177 -30.89578,-109.02087 -76.75,-136.09375 l 0,-57.65625 c -53.50575,-26.09905 -103.62656,-18.34881 -152.68751,0 z"
+                                    id="path3342" />
+                                <path transform="matrix(1.0032718,0,0,-1.125,0.5256265,1540.3802)" d="m -452.56073,728.54718 c 0,4.30935 -34.06084,7.80277 -76.07703,7.80277 -42.01618,0 -76.07702,-3.49342 -76.07702,-7.80277 0,-4.30935 34.06084,-7.80277 76.07702,-7.80277 42.01619,0 76.07703,3.49342 76.07703,7.80277 z"
+                                    id="path3362" style="fill:#0fdd10;" />
+                                <path style="fill:#0fdd10;" id="path3372" d="m -453.27209,728.54718 c 0,4.30935 -33.74236,7.80277 -75.36567,7.80277 -41.62331,0 -75.36567,-3.49342 -75.36567,-7.80277 0,-4.30935 33.74236,-7.80277 75.36567,-7.80277 41.62331,0 75.36567,3.49342 75.36567,7.80277 z"
+                                    transform="matrix(1.0110119,0,0,2.1754466,4.46339,-921.56001)" />
+                            </g>
+                        </g>
+                    </svg>
+
+
+                </h1>
+            </div>
+        </div>
+
+    </main>
+
+
+    <script>
+        $('#menu-sidebar').on('click', function (e) {
+            e.preventDefault();
+            $('#menu-sidebar').toggleClass('close-icon');
+            $('#sidebar').toggleClass('sidenav-on');
+        });
+
+        var urls = {
+            location: "https://freegeoip.net/json/?callback=?",
+            location: "https://ip-api.com/json",
+            weatherCity: "https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/search/?query=",
+            weatherFCCLatLng: "https://fcc-weather-api.glitch.me/api/current?",
+            weatherLatLng: "https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/search/?lattlong=",
+            weatherForecast: "https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/",
+            translate: "https://cors-anywhere.herokuapp.com/https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=us&dt=t&q=",
+            translate: "https://cors-anywhere.herokuapp.com/https://glosbe.com/gapi/translate?from=eng&dest=deu&format=jsonp&pretty=true&phrase="
+        }
+        var locationx;
+        var weatherLL;
+        var geocoder;
+        var temperature = [];
+
+        $("#searchform").submit(function (event) {
+            var searchcity = $("#city").val();
+            console.log(ajxRequest(urls.weatherCity + searchcity));
+            event.preventDefault();
+        });
+
+        $('#cels').click(function () {
+            $("#temperature").html(temperature + "&deg;C");
+        });
+        $('#fahr').click(function () {
+            var temperatureF = (temperature * 1.8) + 32;
+            $("#temperature").html(temperatureF + "&deg;F");
+        });
+        $('#img').click(function () {
+            $("#video").toggle();
+        });
+        $('#vid').click(function () {
+            $("#video").toggle();
+        });
+        $('#city').click(function () {
+
+        });
+
+        getLocation();
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+
+            } else {
+                console.log("Geolocation Error.");
+                ajxRequest(urls.location);
+            }
+        }
+
+        function showPosition(position) {
+
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+
+
+            //ajxRequest(urls.weatherFCCLatLng + "lat=" + lat + "&lon=" + lng);
+            console.log(ajxRequest(urls.weatherLatLng + lat + "," + lng));
+            //ajxRequest(urls.weatherForecast);
+
+        }
+
+        function ajxRequest(url) {
+            $(".spinner").show();
+            $.getJSON({
+                url: url,
+                // dataType: "json",
+                //type: "GET",
+                //jsonpCallback: 'jQuery', // add this property
+                //  contentType: "application/json; charset=utf-8",
+                success: function (result, status, xhr) {
+                    $(".spinner").hide();
+                    if (result.consolidated_weather) {
+
+                        console.log(result);
+                        temperature[0] = Math.floor(result.consolidated_weather[0].the_temp);
+
+                        $('#location').empty().append('<h1 >' + result.title +
+                            " <span id='temperature'>" +
+                            temperature[0] + ' &deg;C</span></h1><p></p><p></p>');
+
+                        var weatherImg = 'https://www.metaweather.com/static/img/weather/' + result
+                            .consolidated_weather[
+                                0].weather_state_abbr +
+                            '.svg';
+                        $('#location').append('<img width=200 src=' + weatherImg + '></p><p></p>');
+
+                        $('#location').append("<p>" +
+                            'Wetter: ' + result.consolidated_weather[0].weather_state_name +
+                            '</p><p>' +
+                            'Wind aus: ' + result.consolidated_weather[0].wind_direction_compass +
+                            '</p><p>' +
+                            'Datum: ' + result.consolidated_weather[0].applicable_date +
+                            '</p><p>' +
+                            'Windgeschwindigkeit: ' + Math.floor((result.consolidated_weather[0]
+                                .wind_speed *
+                                1.60934)) + ' km/h</p><p>' +
+                            'Luftdruck: ' + Math.floor(result.consolidated_weather[0].air_pressure) +
+                            ' mbar </p><p>' +
+                            'Luftfeuchte: ' + Math.floor(result.consolidated_weather[0].humidity) +
+                            '%</p><p>' +
+                            'Sichtbarkeit: ' + Math.floor((result.consolidated_weather[0].visibility *
+                                1.60934)) + ' km</p><p>' +
+                            'Sonnenaufgang: ' + result.sun_rise + '</p><p>' +
+                            'Sonnenuntergang: ' + result.sun_set + '</p><p>' +
+                            'Region: ' + result.timezone + '</p><p>');
+                        /* translate weatherstate                
+                       console.log(ajxRequest(urls.translate + result.consolidated_weather[0].weather_state_name  ));
+
+                       console.log(result + "-------");
+
+
+ */
+
+
+
+                    } else if (result[0] && typeof result != "undefined") {
+                        console.log(result[0].woeid);
+                        console.log(urls.weatherForecast + result[0].woeid + "/");
+                        ajxRequest(urls.weatherForecast + result[0].woeid + "/");
+                    } else if (result.city) {
+                        console.log(result.city);
+                        // drawWeather(result.city);
+                        console.log(result.zip);
+                        $("#location").empty().append(
+                            "<p>" +
+                            'Stadt: ' + result.zip + ' ' + result.city + '</p><p>' +
+                            'Land: ' + result.country + '</p><p>' +
+                            'Region: ' + result.regionName + '</p><p>' +
+                            'Breitengrad: ' + result.lat + '</p><p>' +
+                            'Längengrad: ' + result.lon + '</p><p>');
+                        console.log(ajxRequest(urls.weatherCity + result.city));
+                    } else {
+                        $('#location').html($("#city").val() + ' nicht gefunden.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+                }
+            });
+        }
+    </script>
+
+
+</body>
+
+</html>

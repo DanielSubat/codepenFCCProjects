@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <link href="https://fonts.googleapis.com/css?family=Orbitron|Fugaz+One" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: "D7ML";
+            src: url("https://cdn.jsdelivr.net/npm/dseg@0.43.0/fonts/DSEG7-Classic-MINI/DSEG7ClassicMini-BoldItalic.woff") format('woff');
+        }
+
+        body {
+            font-family: Orbitron;
+            color: white;
+            background: radial-gradient(ellipse at center, #24c6dc 40%, #4776e6 70%, #514a9d 90%) no-repeat;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            perspective: 2000px;
+            transform-origin: 50% 50%;
+        }
+
+        .clock {
+
+
+
+            transform: rotateX(25deg);
+            padding: 20px;
+            border-radius: 2em;
+
+            border-bottom: 10px;
+            min-height: 100px;
+            box-shadow: 0 10px 40px rgba(30, 25, 34, 0.8), 0 10px 5px -5px white inset, 0 -10px 5px -8px #87807a inset, 0 0 8px -1px #050000 inset,
+            0 1px 1px #555, 0 -1px 1px #555, 1px 0px 1px #555, -1px 0 1px #555, inset 4px 4px 4px rgba(255, 255, 255, .4), inset -2px -2px 2px rgba(0, 0, 0, .4);
+            border-bottom: 10px solid #7a7570;
+            width: 380px;
+            z-index: 10;
+            background: #333;
+
+
+        }
+
+        .screen {
+
+
+
+            background-image: linear-gradient(to bottom, rgba(132, 157, 115, 1) 0%, rgba(147, 171, 111, 1) 2%, rgba(147, 172, 106, 1) 3%, rgba(154, 181, 110, 1) 4%, rgba(159, 185, 111, 1) 5%, rgba(168, 190, 115, 1) 6%, rgba(173, 195, 113, 1) 13%, rgba(178, 200, 117, 1) 15%, rgba(176, 198, 113, 1) 17%, rgba(178, 200, 115, 1) 18%, rgba(178, 201, 110, 1) 27%, rgba(181, 204, 113, 1) 29%, rgba(179, 202, 111, 1) 31%, rgba(183, 206, 115, 1) 33%, rgba(183, 207, 111, 1) 48%, rgba(187, 211, 113, 1) 57%, rgba(185, 209, 115, 1) 71%, rgba(183, 207, 113, 1) 73%, rgba(184, 207, 116, 1) 77%, rgba(181, 204, 114, 1) 80%, rgba(181, 203, 120, 1) 84%, rgba(178, 200, 118, 1) 86%, rgba(182, 203, 124, 1) 88%, rgba(177, 193, 120, 1) 91%, rgba(171, 193, 118, 1) 96%, rgba(170, 192, 120, 1) 97%, rgba(169, 186, 132, 1) 99%, rgba(172, 188, 149, 1) 100%);
+            box-shadow: inset 0 0px 8px rgba(0, 0, 0, 0.5), inset 0px 1px 0 #a1a1a1,
+            inset 4px 2px 3px 3px rgba(0, 0, 0, 0.6);
+            /*mix-blend-mode: overlay; yellow display*/
+            font-size: 2em;
+            border-radius: 0.1em;
+            padding: 0.5em;
+            border: 1px solid #888;
+            border-left-color: #333;
+            border-bottom-color: #333;
+            height: 90px;
+            width: 290px;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+
+        .screen:before {
+            content: "";
+            display: block;
+            position: absolute;
+            border-radius: 100px;
+            width: 100%;
+            height: 100px;
+            background-image: linear-gradient(to top, rgba(250, 250, 255, 1) 0%, rgba(250, 250, 255, 0.7) 10%, rgba(250, 250, 255, 0) 100%);
+            top: -45px;
+            left: 0%;
+            transform: scale(1.5, 0.6) rotate(155deg);
+            /*hsla(0, 100%, 0%, .3)*/
+        }
+
+
+
+
+        .ledback,
+        .ledfore {
+            font-family: D7ML, monospace;
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            text-align: left;
+            color: rgba(0, 0, 0, 0.08);
+
+        }
+
+        .ledfore {
+            color: rgba(0, 0, 0, 1);
+            text-shadow: 0 1px 1px rgba(144, 238, 144, 0.5);
+            display: none;
+        }
+
+        .ledbottom {
+            font-family: D7ML, monospace;
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            color: black;
+            font-size: 14px;
+        }
+
+        .layer {
+            border: 1px solid #999;
+            box-shadow: -1px 1px 0px inset white;
+            width: 100%;
+            background-color: rgb(65, 65, 65);
+            border-radius: 10px;
+            border: 2px inset #e6e5ea;
+        }
+
+        .layerafter {
+
+
+            text-shadow: 1px -1px 0px white;
+            color: #666;
+            padding: 0 6px 0 6px;
+        }
+
+        .ledpower.ledactive {
+            background-color: #bb0000;
+            box-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.6);
+            border: 3px solid rgba(120, 0, 0, 1);
+        }
+
+        .ledpower {
+            border-radius: 50%;
+            background-color: #220000;
+            width: 16px;
+            height: 16px;
+            position: relative;
+            cursor: pointer;
+            border: 3px solid #222;
+        }
+
+        .ledpower:before {
+            content: '';
+            border-radius: 50%;
+            background-color: rgba(250, 250, 250, 0.6);
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            top: 1px;
+            left: 1px
+        }
+
+        .button {
+            padding: 5px;
+            width: 46px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-bottom: 5px solid #414147;
+            box-shadow: 1px 1px 8px inset #666, 3px 3px 0 black, -3px -3px 0 black;
+            font-weight: bold;
+            font-size: 18px;
+            background: linear-gradient(to bottom, #313137 0%, #1e1e24 100%);
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4), inset 0 0 4px 4px rgba(0, 0, 0, 0.1), 1px 1px 2px inset #666, 1px 1px 0 black, -1px -1px 0 black;
+            text-shadow: 0 0 10px hsla(208.12, 44.44%, 35.88%, 1);
+            cursor: pointer;
+        }
+
+        .button:active {
+            padding-top: 3px;
+            padding: 3px;
+            border-bottom: 1px solid #313137;
+        }
+    </style>
+
+    <div class="wrapper d-flex align-items-center justify-content-center ">
+
+        <div class="clock mx-auto  mt-5 d-flex  flex-column">
+            <div class="d-flex h-30 p-2 flex-row justify-content-between align-content-between align-items-center">
+
+                <div class="mx-1 my-auto d-flex align-self-center align-content-center justify-content-center ">
+                    <div>Power: </div>
+                    <div id="power" class="mx-1 ledpower align-self-center   "></div>
+
+                </div>
+
+                <div class=" " style="margin-top:-10px;">
+                    <span style="font-family:'Fugaz One';font-size:1.5em;font-weight:bold; color:orangered;">JSC-70 </span>beta
+                </div>
+            </div>
+
+            <div class="wrapper d-flex align-items-center flex-column">
+
+                <div class="layer p-3 mb-3">
+                    <div id="screen" class="screen mx-auto ">
+                        <div class="ledback">8.8.8.8.8.8.8.8.8.8</div>
+                        <div id="ledtext" class="ledfore"></div>
+                        <div id="ledbottom" class="ledbottom"></div>
+                    </div>
+                </div>
+                <div class="nav d-flex flex-row py-2" style="z-index: 10;">
+
+
+
+                    <a id="seton" class="button mx-2">
+                        <span>ON</span>
+                    </a>
+                    <a id="setce" class="button mx-2">
+                        <span>CE</span>
+                    </a>
+
+
+                    <a id="setc" class="button mx-2">
+                        <span>C
+                        </span>
+                    </a>
+                    <a id="setsign" class="button mx-2">
+                        <span>+-</span>
+                    </a>
+                    <a id="set" class="button mx-2">
+                            <span>(</span>
+                        </a>
+                </div>
+
+                <div class="nav d-flex flex-row py-2" style="z-index: 10;">
+
+
+
+                    <a id="set7" class="button mx-2">
+                        <span>7</span>
+                    </a>
+                    <a id="set8" class="button mx-2">
+                        <span>8</span>
+                    </a>
+
+                    <a id="set9" class="button mx-2">
+                        <span>9</span>
+                    </a>
+                    <a id="setdiv" class="button mx-2">
+                        <span>&#10135;
+                            <span>
+                    </a>
+                    <a id="set" class="button mx-2">
+                            <span>)</span>
+                        </a>
+                </div>
+                <div class="nav d-flex flex-row py-2" style="z-index: 10;">
+
+
+
+                    <a id="set4" class="button mx-2">
+                        <span>4</span>
+                    </a>
+                    <a id="set5" class="button mx-2">
+                        <span>5</span>
+                    </a>
+
+                    <a id="set6" class="button mx-2">
+                        <span>6</span>
+                    </a>
+                    <a id="setmul" class="button mx-2">
+                        <span>x</span>
+                    </a>
+                    <a id="set" class="button mx-2">
+                            <span>&radic;</span>
+                        </a>
+                </div>
+                <div class="nav d-flex flex-row py-2" style="z-index: 10;">
+
+
+
+                    <a id="set1" class="button mx-2">
+                        <span>1</span>
+                    </a>
+                    <a id="set2" class="button mx-2">
+                        <span>2</span>
+                    </a>
+
+                    <a id="set3" class="button mx-2">
+                        <span>3</span>
+                    </a>
+                    <a id="setminus" class="button mx-2">
+                        <span>-</span>
+                    </a>
+                    <a id="set" class="button mx-2">
+                            <span>%</span>
+                        </a>
+                </div>
+                <div class="nav d-flex flex-row py-2" style="z-index: 10;">
+
+
+
+                    <a id="set0" class="button mx-2">
+                        <span>0</span>
+                    </a>
+                    <a id="setfloat" class="button mx-2">
+                        <span>.</span>
+                    </a>
+
+                    <a id="seteq" class="button mx-2" style="width:108px">
+                        <span>=</span>
+                    </a>
+                    <a id="setplus" class="button mx-2">
+                        <span>+</span>
+                    </a>
+
+                </div>
+                <span class="layerafter mt-3 ">
+
+                    <div class="d-flex flex-row mt-2 mx-auto justify-content-center align-items-baseline ">
+                        <span style="font-family:'Fugaz One';font-size:1.5em;font-weight:bold; color:dodgerblue;">bbx </span>
+                        <span style="font-size:1em;">&nbsp;JS CALCULATOR</span>
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+        floaty = false;
+        var num = [];
+        var num1 = 0;
+        var power = false;
+        $("#seton").click(function () {
+
+            $(".ledpower").toggleClass("ledactive");
+            $("#ledtext").toggle();
+
+            $("#ledtext").text('on').delay(500).queue(function () {
+                $(this).empty();
+                $(this).dequeue();
+            });
+            if ($(".ledpower").hasClass("ledactive")) {
+                power = true;
+            } else {
+                power = false;
+                $("#ledbottom").empty();
+                $("#ledtext").empty();
+                num = [];
+            }
+            
+        });
+
+        $("#setc").click(function () {
+            floaty = false;
+            $("#ledtext").empty();
+            console.log(num);
+            console.log($("#ledtext").text());
+            //#########################alles AUF ARRAY umstellen auch den LEDTExt  
+            if ($("#ledtext").text() !== "") {
+
+                num.push($("#ledtext").text());
+            }
+            num = num.slice(0, -1);
+            $("#ledbottom").empty().text(num.join(""));
+        });
+
+        $("#setce").click(function () {
+            $("#ledbottom").empty();
+            $("#ledtext").empty();
+            num = [];
+        });
+
+
+        $("#setfloat").click(function () {
+            if (!floaty) {
+                display('.');
+                floaty = true;
+            }
+        });
+
+        $("#setplus").click(function () {
+            setop("+");
+        });
+
+        $("#setminus").click(function () {
+            setop("-");
+        });
+
+        $("#setmul").click(function () {
+            setop("*");
+        });
+
+        $("#setdiv").click(function () {
+            setop("/");
+        });
+
+        $("#setsign").click(function () {
+
+            if (parseInt($("#ledtext").text()) > 0) {
+                num1 = "-" + $("#ledtext").text();
+            } else {
+                num1 = $("#ledtext").text().replace('-', '');
+            }
+            floaty = false;
+            $("#ledtext").text(" " + num1);
+            calc();
+
+
+        });
+
+        $("#seteq").click(function () {
+            calc();
+        });
+
+        $("#set0").click(function () {
+            display(0);
+        });
+        $("#set1").click(function () {
+            display(1);
+        });
+        $("#set2").click(function () {
+            display(2);
+        });
+        $("#set3").click(function () {
+            display(3);
+        });
+        $("#set4").click(function () {
+            display(4);
+        });
+        $("#set5").click(function () {
+            display(5);
+        });
+        $("#set6").click(function () {
+            display(6);
+        });
+        $("#set7").click(function () {
+            display(7);
+        });
+        $("#set8").click(function () {
+            display(8);
+        });
+        $("#set9").click(function () {
+            display(9);
+        });
+
+        function setop(operator) {
+            floaty = false;
+            if ($("#ledtext").text() != "") {
+                num.push($("#ledtext").text());
+            }
+            if (num.length > 0 && num[num.length - 1] != operator) {
+                num.push(operator);
+                $("#ledbottom").append(operator);
+                $("#ledtext").empty();
+            }
+        }
+
+        function display(number) {
+            if (power) {
+                if ($("#ledbottom").text() === "illegal" || $("#ledbottom").text() === "Infinity") {
+                    $("#ledtext").empty();
+                    $("#ledbottom").empty();
+                }
+                if ($("#ledtext").text().length < 11) {
+                    $("#ledtext").append(number);
+                    $("#ledbottom").append(number);
+                }
+            }
+
+        }
+
+        //noch anschauen und verbessern!!
+        function isInt(x) {
+            return !isNaN(x) && eval(x).toString().length == parseInt(eval(x)).toString().length
+        }
+
+        function isFloat(x) {
+            return !isNaN(x) && !isInt(eval(x)) && x.toString().length > 0
+        }
+        //############################
+
+        function calc() {
+
+            //get last input => verbssern!!
+            console.log($("#ledtext").text());
+            if ($("#ledtext").text() != "illegal") {
+                num.push($("#ledtext").text());
+            }
+            console.log(num);
+
+
+
+            //############################
+            // array auflösen und rechnen
+            //############################
+
+            /*
+
+                        if (isFloat(num1) || isFloat($("#ledtext").text())) {
+                            num1 = parseFloat(num1);
+                            num2 = parseFloat($("#ledtext").text());
+                        } else {
+                            num1 = parseInt(num1);
+                            num2 = parseInt($("#ledtext").text());
+                        }
+                        switch (operator) {
+                            case "+":
+                                var result = num1 + num2;
+                                break;
+                            case "-":
+                                var result = num1 - num2;
+                                break;
+                            case "*":
+                                var result = num1 * num2;
+                                break;
+                            case "/":
+                                var result = num1 / num2;
+                                break;
+                        }
+                        if (isFloat(result)) {
+                            result = result.toFixed(9).replace(/\.?0*$/, '');
+                        }
+                     
+                        $("#ledtext").empty().text(result);
+               
+
+                        result = $("#ledbottom").text();
+
+
+                        function mathEval (exp) {
+    var reg = /(?:[a-z$_][a-z0-9$_]*)|(?:[;={}\[\]"'!&<>^\\?:])/ig,
+        valid = true;
+
+    // Detect valid JS identifier names and replace them
+    exp = exp.replace(reg, function ($0) {
+        // If the name is a direct member of Math, allow
+        if (Math.hasOwnProperty($0))
+            return "Math."+$0;
+        // Otherwise the expression is invalid
+        else
+            valid = false;
+    });
+
+    // Don't eval if our replace function flagged as invalid
+    if (!valid)
+        alert("Invalid arithmetic expression");
+    else
+        try { alert(eval(exp)); } catch (e) { alert("Invalid arithmetic expression"); };
+}
+
+            */
+
+            //###avoid eval und regexp anschauen
+            // reg = /(?:[A-Z0-9$_]*)|(?:[;={}[/]\[\]"'!&<>^\\?:])/ig
+            reg = /(?:[;={}[/]\[\]"'!&<>^\\?:])/ig
+       
+
+            num1 = num.join("").replace(reg, '');
+            var numFloat = false;
+            console.log(num1);
+            try {
+                // hier checken ob ein Element Float ist, dann parseFloat
+                /*
+                num.forEach(function (item) {
+                    if (isFloat(item)) {
+                        numFloat = true;
+                        console.log("sdf");
+                        return true;
+                    }
+
+                });
+
+                if (numFloat) {
+
+                    result = parseFloat(num1);
+                } else {
+                    console.log(num1 + "--" + parseInt(num1));
+                    result = eval(num1);
+                }
+
+
+*/
+                //result = parseInt(num1,10);
+                result = eval(num1);
+            } catch (e) {
+                result = "illegal";
+                num = num.slice(num.length);
+            };
+
+            if (isFloat(result)) {
+
+                result = result.toFixed(9).replace(/\.?0*$/, '');
+            }
+            if (result.toString().split("").length > 10) {
+                result = parseFloat(result).toExponential(5);
+                // check for float 
+
+            }
+            if (result === "illegal") {
+                $("#ledbottom").text('illegal');
+
+            } else {
+                $("#ledtext").empty().append(result);
+                num = num.slice(num.length);
+                $("#ledbottom").empty().append(result);
+            }
+        }
+    </script>
+</body>
+
+</html>
